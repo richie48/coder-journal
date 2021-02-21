@@ -1,0 +1,38 @@
+[
+  {
+    "firstName": "Dallas",
+    "lastName": "Petroulis",
+    "email": "dpetroulis0@gmail.com",
+    "phone": "412-176-3667"
+  },
+  {
+    "firstName": "Rosella",
+    "lastName": "Beadon",
+    "email": "rbeadon1@gmail.com",
+    "phone": "382-709-9696"
+  },
+  {
+    "firstName": "Eveleen",
+    "lastName": "Challender",
+    "email": "echallender2@gmail.com",
+    "phone": "217-267-7231"
+  },
+  {
+    "firstName": "Marya",
+    "lastName": "Longthorn",
+    "email": "mlongthorn3@gmail.com",
+    "phone": "222-715-7362"
+  },
+  {
+    "firstName": "Hubie",
+    "lastName": "Ducarne",
+    "email": "hducarne4@gmail.com",
+    "phone": "370-731-0258"
+  },
+  {
+    "firstName": "Janela",
+    "lastName": "Fagge",
+    "email": "jfagge5@gmail.com",
+    "phone": "379-799-9483"
+  }
+]
