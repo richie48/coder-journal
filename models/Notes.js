@@ -23,6 +23,11 @@ const NotesSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 //run this middleware before a note is saved
 NotesSchema.pre('save', async function (next) {
