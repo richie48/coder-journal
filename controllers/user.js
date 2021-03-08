@@ -7,4 +7,22 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: users });
 });
 
-// This will contain a controller and the a seperate controller will be created for the aytheticatio of users.
+exports.deleteUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    next(err);
+  }
+  user.remove();
+  res.status(200).json({ success: true, data: {} });
+});
+
+//desc   get a note
+//access   private
+exports.getUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    next(err);
+  }
+  res.status(200).json({ success: true, data: user });
+});
+// This will contain a controller and the a seperate controller will be created for the authentication of users.

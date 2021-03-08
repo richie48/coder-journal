@@ -50,7 +50,9 @@ exports.getNotes = asyncHandler(async (req, res, next) => {
   if (req.params.userId) {
     query = Notes.find({
       user: req.params.userId,
-    });
+    }).populate({ path: 'user', select: 'firstName lastName' }); //using virtuals
+
+    //why am i forced to use all lowercase to reference a model with populate?
   } else {
     query = Notes.find(JSON.parse(queryStr));
   }
