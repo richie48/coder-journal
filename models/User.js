@@ -28,4 +28,10 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+//run this middleware to delete all notes when a user is deleted
+userSchema.pre('remove', async function (next) {
+  await this.model('Notes').deleteMany({ user: this._id });
+  next();
+});
+
 module.exports = mongoose.model('User', userSchema);
