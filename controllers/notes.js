@@ -1,11 +1,19 @@
 const Notes = require('../models/Notes');
+const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
 const colors = require('colors');
 //desc   add note
 //access   private
 exports.addNote = asyncHandler(async (req, res, next) => {
-  const notes = await Notes.create(req.body);
-  res.status(201).json({ success: true, data: notes });
+  //create a field user in the body of the note we are creating,and puts the id in it.
+  req.body.user = req.params.id;
+  //check if the user exist
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(err);
+  }
+  const note = await Notes.create(req.body);
+  res.status(201).json({ success: true, data: note });
 });
 
 //desc   delete notes
@@ -81,9 +89,20 @@ exports.getNotes = asyncHandler(async (req, res, next) => {
 //desc   get a note
 //access   private
 exports.getNote = asyncHandler(async (req, res, next) => {
-  const notes = await Notes.findById(req.params.id);
-  if (!notes) {
-    next(err);
+  const note = await Notes.findById(req.params.id).populate({
+    path: 'user',
+    select: 'firstName lastName',
+  });
+  if (!note) {
+    return next(err);
   }
-  res.status(200).json({ success: true, data: notes });
+  // const userNotes = await Notes.find({
+  //   user: req.params.userId,
+  // });
+  // if (!userNotes) {
+  //   next(err);
+  // }
+  //I had an issue with checking if the user exist or even has a note
+  res.status(200).json({ success: true, data: note });
+  // }
 });
