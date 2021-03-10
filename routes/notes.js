@@ -10,8 +10,16 @@ const {
 
 const router = express.Router();
 
-router.route('/').get(getNotes).post(addNote);
-router.route('/:id').put(updateNote).delete(deleteNote).get(getNote);
-router.route('/user/:userId').get(getNotes);
+router.route('/').get(getNotes);
+router
+  .route('/:id')
+  .put(updateNote)
+  .delete(deleteNote)
+  .get(getNote)
+  .post(addNote);
+// router.route('/users/:userId/noteid/:id').get(getNote);
+
+//gets all notes for a user
+router.route('/users/:userId').get(getNotes);
 
 module.exports = router;
