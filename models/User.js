@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'please enter a phone number'],
     minLength: 11,
   },
+  totalArchived: Number,
   createdAt: {
     type: Date,
     default: Date.now,

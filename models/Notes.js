@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const NotesSchema = new mongoose.Schema(
+const notesSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -36,7 +36,7 @@ const NotesSchema = new mongoose.Schema(
   }
 );
 
-NotesSchema.virtual('Notesman', {
+notesSchema.virtual('Notesman', {
   ref: 'User',
   localField: '_id',
   foreignField: 'notes',
@@ -44,9 +44,45 @@ NotesSchema.virtual('Notesman', {
 });
 
 //run this middleware before a note is saved
-NotesSchema.pre('save', async function (next) {
+notesSchema.pre('save', async function (next) {
   this.slug = slugify(this.title, { lower: true });
   next();
 });
 
-module.exports = mongoose.model('Notes', NotesSchema);
+//Called a static method on model
+notesSchema.statics.getTotalArchived = async function (userId) {
+  const obj = await this.aggregate([
+    {
+      $match: {
+        user: userId,
+        // archive: 'archived',
+      },
+    },
+    {
+      $group: {
+        _id: `$userId`,
+        totalArchived: { $sum: 1 },
+      },
+    },
+  ]);
+  try {
+    console.log(obj);
+    await this.model('User').findByIdAndUpdate(userId, {
+      totalArchived: obj[0].totalArchived,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// this middlewares are run when a note is saved or removed.
+notesSchema.post('save', async function (next) {
+  this.constructor.getTotalArchived(this.user);
+  next();
+});
+notesSchema.post('remove', async function (next) {
+  this.constructor.getTotalArchived(this.user);
+  next();
+});
+
+module.exports = mongoose.model('Notes', notesSchema);
