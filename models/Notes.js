@@ -53,14 +53,15 @@ notesSchema.pre('save', async function (next) {
 notesSchema.statics.getTotalArchived = async function (userId) {
   const obj = await this.aggregate([
     {
-      $match: {
-        user: userId,
-        // archive: 'archived',
-      },
+      $match: { $and: [{ user: userId }, { archive: 'archived' }] },
+      // $match: {
+      //   user: userId,
+      //   archive: 'archived',
+      // },
     },
     {
       $group: {
-        _id: `$userId`,
+        _id: null,
         totalArchived: { $sum: 1 },
       },
     },
