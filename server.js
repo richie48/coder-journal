@@ -1,11 +1,14 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const notes = require('./routes/notes');
+const userRoutes = require('./routes/userRoutes');
 const logger = require('./middlewares/logger');
 const morgan = require('morgan');
 const errorHandler = require('./middlewares/error');
 const colors = require('colors');
 const asyncHandler = require('express-async-handler');
+const expressFileUpload = require('express-fileupload');
+// const bodyParser = require('body-parser');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -32,11 +35,16 @@ if (process.env.NODE_ENV === 'development') {
 //To use json data in the body of our request
 app.use(express.json());
 
+app.use(expressFileUpload());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
 //To mount routes
 app.use('/api/v1/notes', notes);
 
-//To mount the error handler(important to mount the middleware after the route we need it in is called)
-app.use(errorHandler);
+app.use('/api/v1/users', userRoutes);
 
 //Mount global installed middleware
 app.use(asyncHandler());
+
+//To mount the error handler(important to mount the middleware after the route we need it in is called)
+app.use(errorHandler);

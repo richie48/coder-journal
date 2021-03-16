@@ -2,6 +2,7 @@ const Notes = require('../models/Notes');
 const User = require('../models/User');
 const asyncHandler = require('express-async-handler');
 const colors = require('colors');
+const errorResponse = require('../utils/errorResponse');
 //desc   add note
 //access   private
 exports.addNote = asyncHandler(async (req, res, next) => {
@@ -10,7 +11,9 @@ exports.addNote = asyncHandler(async (req, res, next) => {
   //check if the user exist
   const user = await User.findById(req.params.id);
   if (!user) {
-    return next(err);
+    return next(
+      new errorResponse(`this user ${req.params.id} does not exist`, 404)
+    );
   }
   const note = await Notes.create(req.body);
   res.status(201).json({ success: true, data: note });
@@ -19,23 +22,28 @@ exports.addNote = asyncHandler(async (req, res, next) => {
 //desc   delete notes
 //access   private
 exports.deleteNote = asyncHandler(async (req, res, next) => {
-  const notes = await Notes.findByIdAndRemove(req.params.id);
-  if (!notes) {
-    next(err);
+  //We didn't need to check if the user exist to delete a note,we can handle that in the frontend
+  let note = await Notes.findById(req.params.id);
+  if (!note) {
+    return next(err);
   }
-  res.status(200).json({ success: true, data: notes });
+  await note.remove();
+  res.status(200).json({ success: true, data: note });
 });
 
 //desc   add notes
 //access   private
 exports.updateNote = asyncHandler(async (req, res, next) => {
-  const notes = await Notes.findByIdAndUpdate(req.params.id, req.body, {
+  //We didn't need to check if the user exist to update a note,we can handle that in the frontend
+  let notes = await Notes.findById(req.params.id);
+  if (!notes) {
+    return next(err);
+  }
+
+  notes = await Notes.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
-  if (!notes) {
-    next(err);
-  }
   res.status(200).json({ success: true, data: notes });
 });
 
@@ -89,6 +97,7 @@ exports.getNotes = asyncHandler(async (req, res, next) => {
 //desc   get a note
 //access   private
 exports.getNote = asyncHandler(async (req, res, next) => {
+  //We didn't need to check if the user exist to get a note,we can handle that in the frontend
   const note = await Notes.findById(req.params.id).populate({
     path: 'user',
     select: 'firstName lastName',
@@ -105,4 +114,37 @@ exports.getNote = asyncHandler(async (req, res, next) => {
   //I had an issue with checking if the user exist or even has a note
   res.status(200).json({ success: true, data: note });
   // }
+});
+
+//desc   add an image
+//access   private
+exports.uploadImage = asyncHandler(async (req, res, next) => {
+  const notes = await Notes.findById(req.params.id);
+
+  //check if the note exist
+  if (!notes) {
+    return next(
+      new errorResponse(`The note with id ${req.params.id} is not found`, 404)
+    );
+  }
+  if (!req.files) {
+    return next(new errorResponse(`the file doesnt exist`, 400));
+  }
+  //check if the image uploaded was actually an image
+  if (!req.files.file.mimetype.startsWith('image')) {
+    return next(new errorResponse(`please upload an image file`, 400));
+  }
+  if (req.files.file.size > process.env.MAX_FILE_SIZE) {
+    return next(
+      new errorResponse(
+        `file uploaded larger than limit of ${process.env.MAX_FILE_SIZE}`,
+        400
+      )
+    );
+  }
+  const file = req.files.file;
+  file.name = `photo_${notes._id}_${req.files.file.name}`;
+  console.log(file.name);
+
+  res.status(200).json({ success: true, data: 'image added' });
 });
