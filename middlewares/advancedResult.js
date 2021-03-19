@@ -15,7 +15,7 @@ const advancedResult = (model, populate) => async (req, res, next) => {
 
   //The logic to get all notes for a user and the logic to just get all notes
 
-  //reviewing line 19-33
+  //reviewing line 19-33,i am thinking linr 19 to 24 is useless
   if (req.params.userId) {
     query = model
       .find({
