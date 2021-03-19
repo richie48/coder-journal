@@ -27,8 +27,8 @@ const errorHandler = (err, req, res, next) => {
     error = new errorResponse(message, 404);
   }
 
-  console.log(`This is a ${err.name}`.red.underline);
-  res
+  console.log(`${err.name} spoted`.red.underline);
+  return res
     .status(error.statusCode || 500)
     .json({ success: false, error: error.message || 'server error' });
 
