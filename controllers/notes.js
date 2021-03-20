@@ -1,5 +1,7 @@
 const Notes = require('../models/Notes');
 const User = require('../models/User');
+const advancedResult = require('../middlewares/advancedResult');
+
 const asyncHandler = require('express-async-handler');
 const colors = require('colors');
 const errorResponse = require('../utils/errorResponse');
@@ -50,48 +52,49 @@ exports.updateNote = asyncHandler(async (req, res, next) => {
 //desc   get notes and also get notes for a particular user.
 //access   private
 exports.getNotes = asyncHandler(async (req, res, next) => {
-  const reqQuery = { ...req.query };
-  const removeFields = ['select', 'sort', 'page', 'limit'];
+  res.status(200).json(res.advancedResult);
+  //   const reqQuery = { ...req.query };
+  //   const removeFields = ['select', 'sort', 'page', 'limit'];
 
-  removeFields.forEach((params) => delete reqQuery[params]);
+  //   removeFields.forEach((params) => delete reqQuery[params]);
 
-  let query;
-  let queryStr = JSON.stringify(reqQuery);
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
-  );
+  //   let query;
+  //   let queryStr = JSON.stringify(reqQuery);
+  //   queryStr = queryStr.replace(
+  //     /\b(gt|gte|lt|lte|in)\b/g,
+  //     (match) => `$${match}`
+  //   );
 
-  //The logic to get all notes for a user and the logic to just get all notes
-  if (req.params.userId) {
-    query = Notes.find({
-      user: req.params.userId,
-    }).populate({ path: 'user', select: 'firstName lastName' }); //using virtuals
+  //   //The logic to get all notes for a user and the logic to just get all notes
+  //   if (req.params.userId) {
+  //     query = Notes.find({
+  //       user: req.params.userId,
+  //     }).populate({ path: 'user', select: 'firstName lastName' }); //using virtuals
 
-    //why am i forced to use all lowercase to reference a model with populate?
-  } else {
-    query = Notes.find(JSON.parse(queryStr));
-  }
+  //     //why am i forced to use all lowercase to reference a model with populate?
+  //   } else {
+  //     query = Notes.find(JSON.parse(queryStr));
+  //   }
 
-  //creating the select feature
-  if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ');
-    query = query.select(fields);
-  }
-  //creating the sorting feature
-  if (req.query.sort) {
-    const fields = req.query.sort.split(',').join(' ');
-    query = query.sort(fields);
-  }
+  //   //creating the select feature
+  //   if (req.query.select) {
+  //     const fields = req.query.select.split(',').join(' ');
+  //     query = query.select(fields);
+  //   }
+  //   //creating the sorting feature
+  //   if (req.query.sort) {
+  //     const fields = req.query.sort.split(',').join(' ');
+  //     query = query.sort(fields);
+  //   }
 
-  //for pagination
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 100;
-  const skip = (page - 1) * limit;
-  query = query.skip(skip).limit(limit);
+  //   //for pagination
+  //   const page = parseInt(req.query.page, 10) || 1;
+  //   const limit = parseInt(req.query.limit, 10) || 100;
+  //   const skip = (page - 1) * limit;
+  //   query = query.skip(skip).limit(limit);
 
-  const notes = await query;
-  res.status(200).json({ success: true, data: notes });
+  //   const notes = await query;
+  //   res.status(200).json({ success: true, data: notes });
 });
 
 //desc   get a note
@@ -145,6 +148,20 @@ exports.uploadImage = asyncHandler(async (req, res, next) => {
   const file = req.files.file;
   file.name = `photo_${notes._id}_${req.files.file.name}`;
   console.log(file.name);
-
-  res.status(200).json({ success: true, data: 'image added' });
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+    if (err) {
+      return next(new errorResponse('problem with upload', 500));
+    }
+  });
+  const note = await Notes.findByIdAndUpdate(
+    req.params.id,
+    {
+      photo: file.name,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(200).json({ success: true, data: note });
 });
