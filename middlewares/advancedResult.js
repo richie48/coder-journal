@@ -14,20 +14,15 @@ const advancedResult = (model, populate) => async (req, res, next) => {
   );
 
   //The logic to get all notes for a user and the logic to just get all notes
-
-  //reviewing line 19-33,i am thinking linr 19 to 24 is useless
   if (req.params.userId) {
-    query = model
-      .find({
-        user: req.params.userId,
-      })
-      .populate(populate); //using virtuals
-
-    //why am i forced to use all lowercase to reference a model with populate?
+    query = model.find({
+      user: req.params.userId,
+    });
   } else {
-    query = model.find(JSON.parse(queryStr)).populate(populate);
+    query = model.find(JSON.parse(queryStr));
   }
-  //creating the populate feature
+
+  // creating the populate feature
   if (populate) {
     query = query.populate(populate);
   }
