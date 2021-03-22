@@ -20,6 +20,7 @@ const notesSchema = new mongoose.Schema(
       default: 'not-archived',
     },
     slug: String,
+    photo: String,
     createdAt: {
       type: Date,
       default: Date.now,
@@ -69,7 +70,7 @@ notesSchema.statics.getTotalArchived = async function (userId) {
   try {
     console.log(obj);
     await this.model('User').findByIdAndUpdate(userId, {
-      totalArchived: obj[0].totalArchived,
+      totalArchived: obj[0].totalArchived || 0,
     });
   } catch (err) {
     console.log(err);
