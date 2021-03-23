@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       'Please enter a valid email',
     ],
+    unique: true,
   },
   phone: {
     type: String,
@@ -53,5 +54,8 @@ userSchema.methods.getSignedToken = function () {
   return jwt.sign({ id: this._id }, process.env.SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRE,
   });
+};
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 module.exports = mongoose.model('User', userSchema);
