@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: './config/config.env' });
 
-//load model
+//load models
 const User = require('./models/User');
 
 //connect to database

@@ -2,13 +2,16 @@ const dotenv = require('dotenv');
 const express = require('express');
 const notes = require('./routes/notes');
 const userRoutes = require('./routes/userRoutes');
+const userAuth = require('./routes/userAuth');
 const logger = require('./middlewares/logger');
 const morgan = require('morgan');
 const errorHandler = require('./middlewares/error');
 const colors = require('colors');
 const asyncHandler = require('express-async-handler');
 const expressFileUpload = require('express-fileupload');
+const path = require('path');
 // const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -37,11 +40,15 @@ app.use(express.json());
 
 app.use(expressFileUpload());
 // app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static('public'));
+app.use(cookieParser());
 //To mount routes
 app.use('/api/v1/notes', notes);
 
 app.use('/api/v1/users', userRoutes);
+
+app.use('/api/v1/auth', userAuth);
 
 //Mount global installed middleware
 app.use(asyncHandler());

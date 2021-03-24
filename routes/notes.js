@@ -11,6 +11,8 @@ const {
   uploadImage,
 } = require('../controllers/notes');
 
+const { protect } = require('../middlewares/auth');
+
 const router = express.Router();
 
 router
@@ -21,17 +23,18 @@ router
   );
 router
   .route('/:id')
-  .put(updateNote)
-  .delete(deleteNote)
+  .put(protect, updateNote)
+  .delete(protect, deleteNote)
   .get(getNote)
-  .post(addNote);
+  .post(protect, addNote);
 // router.route('/users/:userId/noteid/:id').get(getNote);
 
-router.route('/:id/image').put(uploadImage);
+router.route('/:id/image').put(protect, uploadImage);
 //gets all notes for a user
 router
   .route('/users/:userId')
   .get(
+    protect,
     advancedResult(Notes, { path: 'user', select: 'firstName lastName' }),
     getNotes
   );
