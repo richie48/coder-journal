@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
     required: [true, 'please enter a phone number'],
     minLength: 11,
   },
+  role: {
+    type: String,
+    default: 'user',
+  },
   totalArchived: Number,
   password: {
     type: String,

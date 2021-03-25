@@ -12,7 +12,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   //Because we want only logged in users to be able to access sole routes we would want
   //to check that the client trying to access a route is logged in
   if (!token) {
-    return next(new errorResponse('Not authorised to access this route'), 401);
+    return next(new errorResponse('Not authorised to access this route', 401));
   }
   try {
     //decoded token contains user id
@@ -21,6 +21,17 @@ exports.protect = asyncHandler(async (req, res, next) => {
     req.user = await User.findById(decodedToken.id);
     next();
   } catch (err) {
-    return next(new errorResponse('Not authorised to access this route'), 401);
+    return next(new errorResponse('Not authorised to access this route', 401));
   }
 });
+
+//Grant access to specific roles
+exports.authorize = (...roles) => async (req, res, next) => {
+  //checks if the user trying to access the roles is included above i ...roles
+  if (!roles.includes(req.user.role)) {
+    return next(
+      new errorResponse('user is not authorised to access this route', 403)
+    );
+  }
+  next();
+};
