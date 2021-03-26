@@ -29,6 +29,15 @@ exports.deleteNote = asyncHandler(async (req, res, next) => {
   if (!note) {
     return next(err);
   }
+  //This is to give authorizatipn to only the creator of the note amd admin to delete the note
+  if (notes.user.toString() !== req.user.id || req.user.role !== 'admin') {
+    return next(
+      new errorResponse(
+        `${req.user.id} is not alloewed to update this note`,
+        403
+      )
+    );
+  }
   await note.remove();
   res.status(200).json({ success: true, data: note });
 });
@@ -40,6 +49,15 @@ exports.updateNote = asyncHandler(async (req, res, next) => {
   let notes = await Notes.findById(req.params.id);
   if (!notes) {
     return next(err);
+  }
+  //This is to give authorizatipn to only the creator of the note
+  if (notes.user.toString() !== req.user.id || req.user.role !== 'admin') {
+    return next(
+      new errorResponse(
+        `${req.user.id} is not alloewed to update this note`,
+        403
+      )
+    );
   }
 
   notes = await Notes.findByIdAndUpdate(req.params.id, req.body, {
@@ -142,6 +160,15 @@ exports.uploadImage = asyncHandler(async (req, res, next) => {
       new errorResponse(
         `file uploaded larger than limit of ${process.env.MAX_FILE_SIZE}`,
         400
+      )
+    );
+  }
+  //This is to give authorizatipn to only the creator of the note
+  if (notes.user.toString() !== req.user.id || req.user.role !== 'admin') {
+    return next(
+      new errorResponse(
+        `${req.user.id} is not alloewed to update this note`,
+        403
       )
     );
   }

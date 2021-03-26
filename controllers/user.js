@@ -25,4 +25,20 @@ exports.getUser = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json({ success: true, data: user });
 });
-// This will contain a controller and the a seperate controller will be created for the authentication of users.
+
+//Update user details
+exports.updateUserDetails = asyncHandler(async (req, res, next) => {
+  //To update user name or email
+  const firstName = req.body.firstName;
+  const email = req.body.email;
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    { email, firstName },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({ success: true, user });
+});
