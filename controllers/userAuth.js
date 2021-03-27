@@ -111,6 +111,6 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   }
   user.password = req.body.newPassword;
   //I made the issue of not vallidating before saving,that meant that isModified didnt know password was modified
-  user.save();
+  await user.save({ validateBeforeSave: true });
   sendTokenResponse(user, 200, res);
 });

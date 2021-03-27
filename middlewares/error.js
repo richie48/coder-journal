@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
 
   //Now we can start making handlers for each of the type of error
   if (err.name === 'CastError') {
-    const message = `Note with id of ${err.value} cannot be found`;
+    const message = `object with id of ${err.value} cannot be found`;
     error = new errorResponse(message, 404);
   }
 

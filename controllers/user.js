@@ -42,3 +42,9 @@ exports.updateUserDetails = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ success: true, user });
 });
+
+//create user
+exports.createUser = asyncHandler(async (req, res, next) => {
+  const user = await User.create(req.body);
+  res.status(201).json({ success: true, data: user });
+});

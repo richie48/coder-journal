@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'please enter a password'],
     select: false,
+    required: true,
   },
   resetPasswordToken: String, //New additions
   resetPasswordExpires: Date,
@@ -50,7 +51,7 @@ userSchema.pre('remove', async function (next) {
 });
 
 userSchema.pre('save', async function (next) {
-  //User.isModified() checks that the User field password is modified
+  //User.isModified() is a mongoose function that checks that the user field password is modified
   if (!this.isModified('password')) {
     return next();
   }
