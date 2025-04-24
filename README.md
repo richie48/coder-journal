@@ -1,7 +1,7 @@
 # 📝 Coder Journal API
 A secure note-taking RESTful API built with Node.js and Express. Includes user authentication, authorization, and note management — ideal for developers who want to manage their coding thoughts, snippets, or journal entries.   
    
-# 🔐 Features
+### 🔐 Features
 User registration and login with JWT-based authentication   
 
 Create, read, update, and delete (CRUD) notes   
