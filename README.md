@@ -1,4 +1,4 @@
-### 📝 Coder Journal API
+# 📝 Coder Journal API
 A secure note-taking RESTful API built with Node.js and Express. Includes user authentication, authorization, and note management — ideal for developers who want to manage their coding thoughts, snippets, or journal entries.   
    
 # 🔐 Features
@@ -10,7 +10,7 @@ Role-based access control
 
 Secure endpoints using middleware   
 
-# 🛠 Tech Stack
+### 🛠 Tech Stack
 Node.js   
 
 Express   
@@ -21,7 +21,7 @@ JWT for authentication
 
 dotenv for environment management   
 
-# Installation
+### Installation
 ```
 git clone https://github.com/richie48/coder-journal.git
 cd coder-journal
@@ -41,7 +41,7 @@ Run the Server
 npm run dev
 ```
 
-# 📬 API Endpoints
+### 📬 API Endpoints
 POST /api/auth/register – Register a new user   
 
 POST /api/auth/login – Login and receive token   
